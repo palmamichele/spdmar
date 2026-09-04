@@ -41,6 +41,20 @@ vec <- function(matrix){
 #   
 # }
 
+matrix_sqrt <- function(A) {
+  eig <- eigen(A, symmetric = TRUE)
+  eig$vectors %*%
+    diag(sqrt(pmax(eig$values, 1e-12))) %*%
+    t(eig$vectors)
+}
+
+matrix_inv_sqrt <- function(A) {
+  eig <- eigen(A, symmetric = TRUE)
+  eig$vectors %*%
+    diag(1 / sqrt(pmax(eig$values, 1e-12))) %*%
+    t(eig$vectors)
+}
+
 
 recover_from_kronecker <- function(C){
   n <- sqrt(nrow(C))
