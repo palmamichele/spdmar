@@ -5,7 +5,11 @@ spdmar <- function(p, n) {
   pars <- lapply(seq_len(p+1), function(i) {
     # A <- matrix(rnorm(n * n), nrow = n, ncol = n)
     # crossprod(A) + diag(n)
-    A <- diag(n)
+    #A <- diag(n)
+    A <- matrix(rnorm(n * n), nrow = n, ncol = n)
+    A <- crossprod(A) + diag(n)
+    A <- A / norm(A, type = "F")
+    
     
   })
   

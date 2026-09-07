@@ -4,7 +4,7 @@
 data_path="~/Desktop/Research Projects/SPDMAR/code/spdmar/data/adjusted_RCOV50_COVDJkernel.csv" 
 p=3 #order of autoregressive models
 set.seed(123)
-n_epochs = 100
+n_epochs = 500
 l_rate = 0.009
 train_thr = 0.8 
 ###
@@ -149,8 +149,7 @@ for (t_ in (p+1):(nrow(test_set))){
 cat("Riemannian Model Test loss: ", cum_test_loss, "\n")
 cat("RW Test loss: ", cum_rw_loss, "\n")
 
-#p=1 RW test loss 148320.8 , model test loss : 122230.1
-#p=5       147146.2       , 644356.4 
+
 
 #estimate VAR on time_series_vec
 # Y <- t(time_series_vec)
