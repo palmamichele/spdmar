@@ -37,9 +37,21 @@ vec <- function(matrix){
   return (v)
 } 
 
-# vech <- function(matrix){
-#   
-# }
+
+vech <- function(matrix) {
+  n <- nrow(matrix)
+  v <- numeric(n * (n + 1) / 2)
+  pos <- 1
+  
+  for (i in 1:n) {
+    len <- n - i + 1
+    v[pos:(pos + len - 1)] <- matrix[i, i:n]
+    pos <- pos + len
+  }
+  
+  return(v)
+}
+
 
 matrix_sqrt <- function(A) {
   eig <- eigen(A, symmetric = TRUE)

@@ -105,10 +105,11 @@ for (epoch in 1:n_epochs){
     sqrt_W <- matrix_sqrt(W)
     inv_sqrt_W <- matrix_inv_sqrt(W)
     
-    riemannian_gradient <- sqrt_W %*% ((G+t(G))/2) %*% sqrt_W
+    riemannian_gradient <- W %*% ((G+t(G))/2) %*% W
     g_norm <- norm(riemannian_gradient, "F")
     
-    step_size <- l_rate * norm(W, "F") / g_norm
+    #step_size <- l_rate * norm(W, "F") / g_norm
+    step_size <- l_rate
     P <- step_size * riemannian_gradient 
    
     
