@@ -9,10 +9,10 @@ T_list = c(200,500,1000)  #nobs the estimator sees
 
 burn_in = 100
 p=1
-n_traj = 1000
-n_epochs = 1000
-l_rate_pgd = 0.009
-l_rate_rm = 0.01
+n_traj = 100
+n_epochs = 10000
+l_rate_pgd = 0.09
+l_rate_rm = 0.09
 n_methods=3
 
 n_experiments = 1 #for generating the pars
@@ -121,6 +121,8 @@ for (exp_id in 1:n_experiments){
     dim = c(n_traj, length(T_list), N)
   )
   
+  pgd_time <- array(NA_real_, dim = c(n_traj, length(T_list)))
+  
   rm_estimates <- array(
     NA_real_,
     dim = c(n_traj, length(T_list), N)
@@ -132,22 +134,23 @@ for (exp_id in 1:n_experiments){
   )
   
   
+  set.seed(exp_id * n_traj)
+  
+  first_p_obs <- lapply(seq_len(p), function(i) {
+    A <- matrix(rnorm(n * n), nrow = n, ncol = n)
+    A <- (A+t(A))*0.5
+    A <- higham_approx(A)
+  })
+  
+  
   for (v in 1:n_traj){
     nsim = t_max+burn_in #nobs generated per 
     Y_final <- array(0,dim = c(n_traj, t_max, n, n))
     cat("trajectory: ", v, "\n")
     
-    
-    
+  
     seed <- exp_id * n_traj + v
     set.seed(seed)
-    
-    first_p_obs <- lapply(seq_len(p), function(i) {
-      A <- matrix(rnorm(n * n), nrow = n, ncol = n)
-      A <- (A+t(A))*0.5
-      A <- higham_approx(A)
-    })
-    
     Yt <- array(0,dim = c(nsim, n, n))
     for (j in 1:p) {
       Yt[j, , ] <- first_p_obs[[j]]
@@ -191,6 +194,7 @@ for (exp_id in 1:n_experiments){
       model <- spdmar(p, n)
       model_r <- model
       
+      pgd_time[v, t_idx] <- system.time({
       for (epoch in 1:n_epochs){
         
         #compute the gradient
@@ -213,6 +217,8 @@ for (exp_id in 1:n_experiments){
         #cat("Epoch:", epoch, "Train Loss:", loss, "\n")
         
       }
+      })[["elapsed"]]
+      
       
       
       
@@ -385,5 +391,6 @@ for (exp_id in 1:n_experiments){
   write.csv(DF, "table_csv.csv")
   print("finished")
 
+  print(pgd_time) #With n_traj = 1 and T_list = c(200, 500, 1000), pgd_time is a 1x3 matrix. Its entries are the PGD times (in seconds) on 200, 500 and 1000 observations.
   }
 
